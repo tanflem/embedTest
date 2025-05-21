@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Arclight Download Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Arclight download endpoint test">
+    <meta name="keywords" content="arclight, download, test">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .log-container {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .error {
+            color: #dc3545;
+        }
+
+        .success {
+            color: #28a745;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Arclight Download Endpoint Test</h1>
+
+    <div class="test-section">
+        <h2>API v1 Test</h2>
+        <button class="button" onclick="testDownload('v1')">Test API v1 Download</button>
+        <button class="button" onclick="checkCORS('v1')">Check CORS (v1)</button>
+        <div id="v1-log" class="log-container"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>API Production Test</h2>
+        <button class="button" onclick="testDownload('prod')">Test Production Download</button>
+        <button class="button" onclick="checkCORS('prod')">Check CORS (Production)</button>
+        <div id="prod-log" class="log-container"></div>
+    </div>
+
+    <script>
+        const endpoints = {
+            v1: 'https://api-v1.arclight.org/dl/1_jf-0-0/529',
+            prod: 'https://api.arclight.org/dl/1_jf-0-0/529'
+        };
+
+        function log(message, type = 'info', containerId) {
+            const logContainer = document.getElementById(containerId);
+            const logEntry = document.createElement('div');
+            logEntry.className = type;
+            logEntry.textContent = `${new Date().toISOString()} - ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(message);
+        }
+
+        async function checkCORS(version) {
+            const containerId = `${version}-log`;
+            const url = endpoints[version];
+
+            log(`Checking CORS for ${url}`, 'info', containerId);
+
+            try {
+                const response = await fetch(url, {
+                    method: 'HEAD',
+                    mode: 'cors'
+                });
+
+                log(`CORS Check Response Status: ${response.status}`, 'success', containerId);
+
+                // Log all headers
+                for (const [key, value] of response.headers.entries()) {
+                    log(`Header: ${key}: ${value}`, 'info', containerId);
+                }
+            } catch (error) {
+                log(`CORS Error: ${error.message}`, 'error', containerId);
+            }
+        }
+
+        async function testDownload(version) {
+            const containerId = `${version}-log`;
+            const url = endpoints[version];
+
+            log(`Testing download from ${url}`, 'info', containerId);
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+
+                log(`Download Response Status: ${response.status}`, 'success', containerId);
+
+                // Log all headers
+                for (const [key, value] of response.headers.entries()) {
+                    log(`Header: ${key}: ${value}`, 'info', containerId);
+                }
+
+                // Check content type and size
+                const contentType = response.headers.get('content-type');
+                const contentLength = response.headers.get('content-length');
+
+                log(`Content Type: ${contentType}`, 'info', containerId);
+                log(`Content Length: ${contentLength} bytes`, 'info', containerId);
+
+                // Create download link if successful
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const downloadUrl = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = `arclight-download-${version}.mp4`;
+                    a.textContent = 'Download File';
+                    a.className = 'button';
+                    document.getElementById(containerId).appendChild(a);
+                }
+            } catch (error) {
+                log(`Download Error: ${error.message}`, 'error', containerId);
+            }
+        }
+    </script>
+</body>
+
+</html>
