@@ -53,6 +53,12 @@
         .success {
             color: #28a745;
         }
+
+        .endpoint-info {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
@@ -61,6 +67,7 @@
 
     <div class="test-section">
         <h2>API v1 Test</h2>
+        <div class="endpoint-info">Endpoint: https://api-v1.arclight.org/dl/1_jf-0-0/529</div>
         <button class="button" onclick="testDownload('v1')">Test API v1 Download</button>
         <button class="button" onclick="checkCORS('v1')">Check CORS (v1)</button>
         <div id="v1-log" class="log-container"></div>
@@ -68,15 +75,34 @@
 
     <div class="test-section">
         <h2>API Production Test</h2>
+        <div class="endpoint-info">Endpoint: https://api.arclight.org/dl/1_jf-0-0/529</div>
         <button class="button" onclick="testDownload('prod')">Test Production Download</button>
         <button class="button" onclick="checkCORS('prod')">Check CORS (Production)</button>
         <div id="prod-log" class="log-container"></div>
     </div>
 
+    <div class="test-section">
+        <h2>Core Stage Test</h2>
+        <div class="endpoint-info">Endpoint: https://core-stage.arclight.org/dl/1_jf-0-0/529</div>
+        <button class="button" onclick="testDownload('core-stage')">Test Core Stage Download</button>
+        <button class="button" onclick="checkCORS('core-stage')">Check CORS (Core Stage)</button>
+        <div id="core-stage-log" class="log-container"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Localhost Test</h2>
+        <div class="endpoint-info">Endpoint: http://localhost:4600/dl/1_jf-0-0/529</div>
+        <button class="button" onclick="testDownload('localhost')">Test Localhost Download</button>
+        <button class="button" onclick="checkCORS('localhost')">Check CORS (Localhost)</button>
+        <div id="localhost-log" class="log-container"></div>
+    </div>
+
     <script>
         const endpoints = {
             v1: 'https://api-v1.arclight.org/dl/1_jf-0-0/529',
-            prod: 'https://api.arclight.org/dl/1_jf-0-0/529'
+            prod: 'https://api.arclight.org/dl/1_jf-0-0/529',
+            'core-stage': 'https://core-stage.arclight.org/dl/1_jf-0-0/529',
+            'localhost': 'http://localhost:4600/dl/1_jf-0-0/529'
         };
 
         function log(message, type = 'info', containerId) {
@@ -98,7 +124,8 @@
             try {
                 const response = await fetch(url, {
                     method: 'HEAD',
-                    mode: 'cors'
+                    mode: 'cors',
+                    credentials: 'include'
                 });
 
                 log(`CORS Check Response Status: ${response.status}`, 'success', containerId);
@@ -107,6 +134,23 @@
                 for (const [key, value] of response.headers.entries()) {
                     log(`Header: ${key}: ${value}`, 'info', containerId);
                 }
+
+                // Check for specific CORS headers
+                const corsHeaders = [
+                    'access-control-allow-origin',
+                    'access-control-allow-methods',
+                    'access-control-allow-headers',
+                    'access-control-allow-credentials'
+                ];
+
+                corsHeaders.forEach(header => {
+                    const value = response.headers.get(header);
+                    if (value) {
+                        log(`CORS Header ${header}: ${value}`, 'success', containerId);
+                    } else {
+                        log(`CORS Header ${header}: Not present`, 'error', containerId);
+                    }
+                });
             } catch (error) {
                 log(`CORS Error: ${error.message}`, 'error', containerId);
             }
@@ -121,7 +165,8 @@
             try {
                 const response = await fetch(url, {
                     method: 'GET',
-                    mode: 'cors'
+                    mode: 'cors',
+                    credentials: 'include'
                 });
 
                 log(`Download Response Status: ${response.status}`, 'success', containerId);
