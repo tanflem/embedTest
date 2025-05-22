@@ -67,50 +67,51 @@
 
     <div class="test-section">
         <h2>API v1 Test</h2>
-        <div class="endpoint-info">Endpoint: https://api-v1.arclight.org/dl/1_jf-0-0/529</div>
+        <div class="endpoint-info">Endpoint: https://api-v1.arclight.org/dl/1_jf6101-0-0/529</div>
         <button class="button" onclick="testDownload('v1')">Test API v1 Download</button>
         <button class="button" onclick="checkCORS('v1')">Check CORS (v1)</button>
-        <a href="https://api-v1.arclight.org/dl/1_jf-0-0/529" class="button" target="_blank" download>Direct Download
+        <a href="https://api-v1.arclight.org/dl/1_jf6101-0-0/529" class="button" target="_blank" download>Direct
+            Download
             (v1)</a>
         <div id="v1-log" class="log-container"></div>
     </div>
 
     <div class="test-section">
         <h2>API Production Test</h2>
-        <div class="endpoint-info">Endpoint: https://api.arclight.org/dl/1_jf-0-0/529</div>
+        <div class="endpoint-info">Endpoint: https://api.arclight.org/dl/1_jf6101-0-0/529</div>
         <button class="button" onclick="testDownload('prod')">Test Production Download</button>
         <button class="button" onclick="checkCORS('prod')">Check CORS (Production)</button>
-        <a href="https://api.arclight.org/dl/1_jf-0-0/529" class="button" target="_blank" download>Direct Download
+        <a href="https://api.arclight.org/dl/1_jf6101-0-0/529" class="button" target="_blank" download>Direct Download
             (Production)</a>
         <div id="prod-log" class="log-container"></div>
     </div>
 
     <div class="test-section">
         <h2>Core Stage Test</h2>
-        <div class="endpoint-info">Endpoint: https://core-stage.arclight.org/dl/1_jf-0-0/529</div>
+        <div class="endpoint-info">Endpoint: https://core-stage.arclight.org/dl/1_jf6101-0-0/529</div>
         <button class="button" onclick="testDownload('core-stage')">Test Core Stage Download</button>
         <button class="button" onclick="checkCORS('core-stage')">Check CORS (Core Stage)</button>
-        <a href="https://core-stage.arclight.org/dl/1_jf-0-0/529" class="button" target="_blank" download>Direct
+        <a href="https://core-stage.arclight.org/dl/1_jf6101-0-0/529" class="button" target="_blank" download>Direct
             Download (Core Stage)</a>
         <div id="core-stage-log" class="log-container"></div>
     </div>
 
     <div class="test-section">
         <h2>Localhost Test</h2>
-        <div class="endpoint-info">Endpoint: http://localhost:4600/dl/1_jf-0-0/529</div>
+        <div class="endpoint-info">Endpoint: http://localhost:4600/dl/1_jf6101-0-0/529</div>
         <button class="button" onclick="testDownload('localhost')">Test Localhost Download</button>
         <button class="button" onclick="checkCORS('localhost')">Check CORS (Localhost)</button>
-        <a href="http://localhost:4600/dl/1_jf-0-0/529" class="button" target="_blank" download>Direct Download
+        <a href="http://localhost:4600/dl/1_jf6101-0-0/529" class="button" target="_blank" download>Direct Download
             (Localhost)</a>
         <div id="localhost-log" class="log-container"></div>
     </div>
 
     <script>
         const endpoints = {
-            v1: 'https://api-v1.arclight.org/dl/1_jf-0-0/529',
-            prod: 'https://api.arclight.org/dl/1_jf-0-0/529',
-            'core-stage': 'https://core-stage.arclight.org/dl/1_jf-0-0/529',
-            'localhost': 'http://localhost:4600/dl/1_jf-0-0/529'
+            v1: 'https://api-v1.arclight.org/dl/1_jf6101-0-0/529',
+            prod: 'https://api.arclight.org/dl/1_jf6101-0-0/529',
+            'core-stage': 'https://core-stage.arclight.org/dl/1_jf6101-0-0/529',
+            'localhost': 'http://localhost:4600/dl/1_jf6101-0-0/529'
         };
 
         function log(message, type = 'info', containerId) {
