@@ -121,18 +121,41 @@
 
             log(`Checking CORS for ${url}`, 'info', containerId);
 
+            // First, check OPTIONS preflight
             try {
-                const response = await fetch(url, {
-                    method: 'HEAD',
+                log('Testing OPTIONS preflight request...', 'info', containerId);
+                const optionsResponse = await fetch(url, {
+                    method: 'OPTIONS',
                     mode: 'cors',
-                    credentials: 'include'
+                    headers: {
+                        'Access-Control-Request-Method': 'GET',
+                        'Access-Control-Request-Headers': 'content-type'
+                    }
                 });
 
-                log(`CORS Check Response Status: ${response.status}`, 'success', containerId);
+                log(`OPTIONS Response Status: ${optionsResponse.status}`, 'success', containerId);
+
+                // Log all headers from OPTIONS
+                for (const [key, value] of optionsResponse.headers.entries()) {
+                    log(`OPTIONS Header: ${key}: ${value}`, 'info', containerId);
+                }
+            } catch (error) {
+                log(`OPTIONS Request Error: ${error.message}`, 'error', containerId);
+            }
+
+            // Then try HEAD request
+            try {
+                log('Testing HEAD request...', 'info', containerId);
+                const response = await fetch(url, {
+                    method: 'HEAD',
+                    mode: 'cors'
+                });
+
+                log(`HEAD Response Status: ${response.status}`, 'success', containerId);
 
                 // Log all headers
                 for (const [key, value] of response.headers.entries()) {
-                    log(`Header: ${key}: ${value}`, 'info', containerId);
+                    log(`HEAD Header: ${key}: ${value}`, 'info', containerId);
                 }
 
                 // Check for specific CORS headers
@@ -140,7 +163,8 @@
                     'access-control-allow-origin',
                     'access-control-allow-methods',
                     'access-control-allow-headers',
-                    'access-control-allow-credentials'
+                    'access-control-allow-credentials',
+                    'access-control-expose-headers'
                 ];
 
                 corsHeaders.forEach(header => {
@@ -152,7 +176,25 @@
                     }
                 });
             } catch (error) {
-                log(`CORS Error: ${error.message}`, 'error', containerId);
+                log(`HEAD Request Error: ${error.message}`, 'error', containerId);
+            }
+
+            // Finally, try a simple GET request without CORS mode
+            try {
+                log('Testing simple GET request...', 'info', containerId);
+                const simpleResponse = await fetch(url, {
+                    method: 'GET',
+                    mode: 'no-cors'  // Try without CORS mode
+                });
+
+                log(`Simple GET Response Status: ${simpleResponse.status}`, 'success', containerId);
+
+                // Log all headers
+                for (const [key, value] of simpleResponse.headers.entries()) {
+                    log(`Simple GET Header: ${key}: ${value}`, 'info', containerId);
+                }
+            } catch (error) {
+                log(`Simple GET Request Error: ${error.message}`, 'error', containerId);
             }
         }
 
@@ -165,8 +207,7 @@
             try {
                 const response = await fetch(url, {
                     method: 'GET',
-                    mode: 'cors',
-                    credentials: 'include'
+                    mode: 'cors'
                 });
 
                 log(`Download Response Status: ${response.status}`, 'success', containerId);
