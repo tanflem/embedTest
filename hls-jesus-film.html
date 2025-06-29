@@ -2,10 +2,11 @@
 <html>
 
 <head>
-    <title>Client's Exact Script Test - Stage</title>
+    <title>HLS Jesus Film Test (Fixed)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Simple Jesus Film test for client - Stage Environment">
+    <meta name="description" content="HLS Jesus Film test with HLS.js support">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,7 +20,7 @@
             text-align: center;
             margin-bottom: 30px;
             padding: 20px;
-            background: #e74c3c;
+            background: #27ae60;
             color: white;
             border-radius: 8px;
         }
@@ -49,7 +50,7 @@
 
         .load-btn {
             padding: 8px 20px;
-            background: #e74c3c;
+            background: #27ae60;
             color: white;
             border: none;
             border-radius: 4px;
@@ -58,7 +59,7 @@
         }
 
         .load-btn:hover {
-            background: #c0392b;
+            background: #229954;
         }
 
         .video-container {
@@ -80,24 +81,18 @@
         }
 
         .info {
-            background: #fdf2e9;
-            color: #e67e22;
+            background: #d5f4e6;
+            color: #27ae60;
             padding: 15px;
             border-radius: 4px;
             margin: 20px 0;
             text-align: center;
         }
 
-        .loading {
-            color: #666;
-            padding: 20px;
-            text-align: center;
-        }
-
         .back-link {
             display: inline-block;
             margin-bottom: 20px;
-            color: #e74c3c;
+            color: #27ae60;
             text-decoration: none;
         }
 
@@ -105,26 +100,27 @@
             text-decoration: underline;
         }
 
-        .stage-banner {
-            background: #f39c12;
-            color: white;
-            text-align: center;
+        .hls-status {
+            background: #e8f5e8;
+            color: #2d8659;
             padding: 10px;
-            margin-bottom: 20px;
             border-radius: 4px;
-            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 14px;
         }
     </style>
 </head>
 
 <body>
-    <div class="stage-banner">⚠️ STAGE ENVIRONMENT - FOR TESTING ONLY</div>
-
     <a href="index.html" class="back-link">← Back to Main</a>
 
     <div class="header">
-        <h1>Client's Exact Script Test - Stage</h1>
-        <p>Using the client's exact script with Stage API endpoints</p>
+        <h1>HLS Jesus Film Test (Fixed)</h1>
+        <p>Using HLS.js library to support HLS streaming</p>
+    </div>
+
+    <div class="hls-status">
+        ✅ HLS.js loaded - This version supports HLS streaming in all browsers
     </div>
 
     <div class="controls">
@@ -209,14 +205,14 @@
     <div class="video-container">
         <div id="jf-player">
             <div class="info">
-                <strong>Stage Environment Test</strong><br>
-                This uses stage API endpoints for testing purposes.
+                <strong>HLS Test Ready!</strong><br>
+                This version includes HLS.js library to support HLS streaming in all browsers.
             </div>
         </div>
     </div>
 
     <script>
-        // CLIENT'S EXACT SCRIPT - STAGE VERSION
+        // CLIENT'S SCRIPT MODIFIED TO WORK WITH HLS
         var langIds = [
             { twr: 1, jf: 529 },
             { twr: 2, jf: 21028 },
@@ -351,10 +347,36 @@
             { twr: 181, jf: 4576 },
             { twr: 186, jf: 371 }
         ];
+
         var getVideo = function getJesusFilmVideoLink(id) {
-            var video = "https://core-stage.arclight.org/hls/1_jf-0-0/" + id;
-            $('#jf-player').html("<video controls src=" + video + "></video>");
+            var videoUrl = "https://arc.gt/hls/1_jf-0-0/" + id;
+
+            // Create video element
+            $('#jf-player').html("<video id='hls-video' controls style='width: 100%; max-width: 100%; height: auto; border-radius: 8px;'></video>");
+
+            var video = document.getElementById('hls-video');
+
+            // Check if HLS is supported natively or if we need HLS.js
+            if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Native HLS support (Safari)
+                video.src = videoUrl;
+            } else if (Hls.isSupported()) {
+                // Use HLS.js for other browsers
+                var hls = new Hls();
+                hls.loadSource(videoUrl);
+                hls.attachMedia(video);
+
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    console.error('HLS Error:', data);
+                    if (data.fatal) {
+                        $('#jf-player').html('<div style="color: red; padding: 20px; text-align: center;">Error loading video: ' + data.details + '</div>');
+                    }
+                });
+            } else {
+                $('#jf-player').html('<div style="color: red; padding: 20px; text-align: center;">HLS is not supported in this browser</div>');
+            }
         }
+
         var getLanguage = function filterLanguageBySiteId(id) {
             const ids = langIds.filter(function (lang) {
                 return lang.twr === id;
