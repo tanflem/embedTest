@@ -352,11 +352,8 @@
             { twr: 186, jf: 371 }
         ];
         var getVideo = function getJesusFilmVideoLink(id) {
-            $.get('https://arc.gt/hls/1_jf-0-0/' + id,
-                function (data) {
-                    var video = data;
-                    $('#jf-player').html("<video controls src=" + video + "></video>");
-                });
+            var video = "https://arc.gt/hls/1_jf-0-0/" + id;
+            $('#jf-player').html("<video controls src=" + video + "></video>");
         }
         var getLanguage = function filterLanguageBySiteId(id) {
             const ids = langIds.filter(function (lang) {
