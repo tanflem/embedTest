@@ -352,9 +352,9 @@
             { twr: 186, jf: 371 }
         ];
         var getVideo = function getJesusFilmVideoLink(id) {
-            $.get('https://api.arclight.org/v2/media-components/1_jf-0-0/languages/' + id + '?apiKey=52aa01f9ac52e6.29922389',
+            $.get('https://arc.gt/hls/1_jf-0-0/' + id,
                 function (data) {
-                    var video = data.downloadUrls.high.url;
+                    var video = data;
                     $('#jf-player').html("<video controls src=" + video + "></video>");
                 });
         }
