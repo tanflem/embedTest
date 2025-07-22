@@ -119,6 +119,7 @@
 </head>
 
 <body>
+    <div id="env-banner" style="display:none;"></div>
     <a href="index.html" class="back-link">← Back to Main</a>
 
     <div class="header">
@@ -351,8 +352,23 @@
             { twr: 181, jf: 4576 },
             { twr: 186, jf: 371 }
         ];
+        // Determine environment from URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var env = urlParams.get('env') || 'prod';
+        var isStage = (env === 'stage');
+        // Set banner if stage
+        $(function () {
+            if (isStage) {
+                $('#env-banner').show().text('⚠️ STAGE ENVIRONMENT - FOR TESTING ONLY').css({
+                    background: '#f39c12', color: 'white', textAlign: 'center', padding: '10px', marginBottom: '20px', borderRadius: '4px', fontWeight: 'bold'
+                });
+            }
+        });
+        // Endpoint logic
         var getVideo = function getJesusFilmVideoLink(id) {
-            var video = "https://arc.gt/dl/1_jf-0-0/" + id;
+            var video = isStage
+                ? "https://core-stage.arclight.org/hls/1_jf-0-0/" + id
+                : "https://arc.gt/dl/1_jf-0-0/" + id;
             $('#jf-player').html("<video controls src=" + video + "></video>");
         }
         var getLanguage = function filterLanguageBySiteId(id) {
